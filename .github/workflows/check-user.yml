@@ -1,0 +1,36 @@
+name: Authenticate Push
+
+on:
+    push:
+        branches:
+            - '**'
+
+jobs:
+    check-user:
+        runs-on: ubuntu-latest
+        steps:
+          - name: Checkout repository
+            uses: actions/checkout@v3
+
+          - name: Check Account Pushing
+            run: |
+                echo "account pushing: $GITHUB_ACTOR"
+
+                AUTHOR=$(git log -1 --pretty=format:'%an')
+                echo "commit author: $AUTHOR"
+
+                ALLOWED_USERS=("novamapp")
+
+                # check if account pushing is in allowed list
+                if [[ ! " ${ALLOWED_USERS[@]} " =~ " ${GITHUB_ACTOR} " ]]; then
+                    echo " ❌ ERROR: Account $GITHUB_ACTOR is not allowed to push to $GITHUB_REF_NAME"
+                    exit 1
+                fi
+
+                # check if commit author is in allowed list
+                if [[ ]]; then
+                    echo "❌ ERROR: Commit $AUTHOR is not allowed to push to $GITHUB_REF_NAME"
+                    exit 1
+                fi
+
+                echo "✅ push successful"
